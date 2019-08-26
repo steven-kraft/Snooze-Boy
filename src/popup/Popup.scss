@@ -2,6 +2,8 @@
 
 $primary-color: darkblue;
 $background-color: #4D4D4D;
+$border-color: #6D6D6D;
+$hover-bg-color: #7D7D7D;
 
 // Chrome applies an 8px margin by default (gross).
 body {
@@ -12,17 +14,38 @@ body {
     background-color: $background-color;
     color: $primary-color;
     display: block;
-    font-size: 20px;
-    height: 300px;
-    width: 300px;
+}
+
+.button-grid {
+  height: 300px;
+  width: 300px;
+}
+
+.tab-list {
+  height: 17px;
+  overflow: hidden;
+  background-color: $background-color;
+  transition: background-color 0.5s;
+
+  .arrow {
+    display: block;
+    margin: -9px auto;
+    height: 32px;
+  }
+
+  &:hover {
+    background-color: $hover-bg-color;
+    transition: background-color 0.5s;
+  }
 }
 
 .snooze-button {
   width: 100px;
   height: 100px;
   border: none;
-  outline: 1px solid white;
+  outline: 1px solid $border-color;
   background-color: $background-color;
+  transition: background-color 0.5s;
 
   .icon {
     margin: auto;
@@ -35,10 +58,13 @@ body {
     font-family: 'Roboto', sans-serif;
     font-style: bold;
     font-size: 12px;
-    line-height: 14px;
-    align-items: center;
     text-align: center;
-
+    min-height: 14px;
     color: #FFFFFF;
+  }
+
+  &:hover {
+    background-color: $hover-bg-color;
+    transition: background-color 0.5s;
   }
 }

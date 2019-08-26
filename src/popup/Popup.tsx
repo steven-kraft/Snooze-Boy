@@ -9,7 +9,7 @@ function Button(props) {
   let img = "img/icon-" + props.index + ".svg"
   return <button className="snooze-button">
     <div className="icon"><img src={img} /></div>
-    <div className="label">1 Hour</div>
+    <div className="label">{props.label}</div>
     </button>;
 }
 
@@ -26,15 +26,20 @@ export default class Popup extends React.Component<AppProps, AppState> {
     render() {
         return (
             <div className="popupContainer">
-                <Button index="1" />
-                <Button index="2" />
-                <Button index="3" />
-                <Button index="4" />
-                <Button index="5" />
-                <Button index="6" />
-                <Button index="7" />
-                <Button index="8" />
-                <Button index="9" />
+              <div className="button-grid">
+                <Button index="1" label="One Hour" />
+                <Button index="2" label="3 Hours" />
+                <Button index="3" label="6 Hours" />
+                <Button index="4" label="12 Hours" />
+                <Button index="5" label="One Day" />
+                <Button index="6" label="3 Days" />
+                <Button index="7" label="One Week" />
+                <Button index="8" label="One Month" />
+                <Button index="9" label="" />
+              </div>
+              <div className="tab-list">
+                <img className="arrow" src="img/expand-arrow.svg" />
+              </div>
             </div>
         )
     }
