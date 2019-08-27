@@ -19,6 +19,9 @@ body {
 .button-grid {
   height: 300px;
   width: 300px;
+  display: grid;
+  grid-template-columns: 100px 100px 100px;
+  grid-template-rows: 100px 100px 100px;
 }
 
 .tab-list {
@@ -40,8 +43,6 @@ body {
 }
 
 .snooze-button {
-  width: 100px;
-  height: 100px;
   border: none;
   outline: 1px solid $border-color;
   background-color: $background-color;
@@ -49,8 +50,6 @@ body {
 
   .icon {
     margin: auto;
-    width: 48px;
-    height: 48px;
   }
 
   .label {
@@ -66,5 +65,19 @@ body {
   &:hover {
     background-color: $hover-bg-color;
     transition: background-color 0.5s;
+  }
+}
+
+.dual-button {
+  outline: 1px solid $border-color;
+
+  a .bg {
+    transition: fill 0.5s;
+    fill: $background-color
+  }
+
+  a:hover .bg {
+    fill: $hover-bg-color;
+    transition: fill 0.5s;
   }
 }
