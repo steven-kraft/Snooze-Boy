@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap');
 
-$primary-color: darkblue;
 $background-color: #4D4D4D;
 $border-color: #6D6D6D;
 $hover-bg-color: #7D7D7D;
@@ -11,7 +10,6 @@ body {
 
 .popupContainer {
     background-color: $background-color;
-    color: $primary-color;
 }
 
 .button-grid {
