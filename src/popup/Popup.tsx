@@ -8,6 +8,7 @@ interface AppState {}
 interface ButtonProps {
   index: string;
   label: string;
+  flipped: boolean;
   time?: number;
   unit?: moment.unitOfTime.DurationConstructor;
 }
@@ -18,44 +19,45 @@ class Button extends React.Component<ButtonProps> {
     this.handle_snooze = this.handle_snooze.bind(this);
   }
 
-  img = "img/icon-" + this.props.index + ".svg";
-
   handle_snooze(): void {
     let date = Date.now();
     chrome.runtime.sendMessage({ new_snooze: true, date: date });
-    alert(moment().add(this.props.time, this.props.unit))
+    alert(moment().add(this.props.time, this.props.unit));
     window.close();
   }
 
   test(): void {
-    alert("test")
+    alert("test");
   }
 
   render() {
+    var img = (this.props.flipped ? "img/flip-" : "img/") + "icon-" + this.props.index + ".svg"
+
     return (
       <button className="snooze-button" onClick={this.handle_snooze}>
-        <div className="icon"><img src={this.img} /></div>
+        <div className="icon"><img src={img} /></div>
         <div className="label">{this.props.label}</div>
       </button>
     );
   }
 }
 
-class DualButton extends React.Component {
+interface DualButtonProps {
+  flip?: any;
+}
+
+class DualButton extends React.Component<DualButtonProps> {
   custom_snooze(): void {
     alert("CUSTOM SNOOZE WINDOW");
     window.close();
   }
-  flip(): void {
-    alert("FLIP!");
-    window.close();
-  }
+
   render() {
     return (
       <div className="dual-button">
         <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g clip-path="url(#clip0)">
-        <a onClick={this.flip} href="#" id="bottom-button">
+        <a onClick={this.props.flip} href="#" id="bottom-button">
           <rect width="100" height="100" className="bg" />
           <path d="M91.497 86.1994C91.8589 86.0512 92.0954 85.6946 92.0971 85.3028L93.8586 70.6338C93.8604 70.099 93.4235 69.6622 92.8879 69.663L78.2498 71.4554C77.9868 71.4536 77.7405 71.5604 77.5632 71.7378C77.4732 71.8278 77.4026 71.9355 77.3514 72.0538C77.2013 72.4173 77.2975 72.8206 77.5755 73.0986L81.4224 76.9455C72.637 85.7308 66.3165 87.0952 59.0094 78.6178C67.9147 94.9662 77.9118 90.6772 86.5329 82.0561L90.453 85.9761C90.7319 86.2532 91.1343 86.3503 91.497 86.1994Z" fill="white"/>
         </a>
@@ -76,21 +78,44 @@ class DualButton extends React.Component {
   }
 }
 
-class ButtonGrid extends React.Component {
+class ButtonGrid extends React.Component<{}, {flipped: boolean}> {
+  constructor(props) {
+    super(props);
+    this.state = {flipped: false};
+  }
+
+  flip() {
+    this.setState({
+      flipped: !this.state.flipped
+    });
+  }
+
   render() {
-    return (
-      <div className="button-grid">
-        <Button index="1" label="One Hour" time={1} unit="hours" />
-        <Button index="2" label="3 Hours" time={3} unit="hours" />
-        <Button index="3" label="6 Hours" time={6} unit="hours" />
-        <Button index="4" label="12 Hours" time={12} unit="hours" />
-        <Button index="5" label="One Day" time={1} unit="days" />
-        <Button index="6" label="3 Days" time={3} unit="days" />
-        <Button index="7" label="One Week" time={1} unit="weeks" />
-        <Button index="8" label="One Month" time={1} unit="months" />
-        <DualButton />
-      </div>
-    );
+    if (this.state.flipped) {
+      return(<div className="button-grid">
+        <Button index="1" label="F One Hour" time={1} unit="hours" flipped={this.state.flipped} />
+        <Button index="2" label="F 3 Hours" time={3} unit="hours" flipped={this.state.flipped} />
+        <Button index="3" label="F 6 Hours" time={6} unit="hours" flipped={this.state.flipped} />
+        <Button index="4" label="F 12 Hours" time={12} unit="hours" flipped={this.state.flipped} />
+        <Button index="5" label="F One Day" time={1} unit="days" flipped={this.state.flipped} />
+        <Button index="6" label="F 3 Days" time={3} unit="days" flipped={this.state.flipped} />
+        <Button index="7" label="F One Week" time={1} unit="weeks" flipped={this.state.flipped} />
+        <Button index="8" label="F One Month" time={1} unit="months" flipped={this.state.flipped} />
+        <DualButton flip={this.flip.bind(this)} />
+      </div>);
+    }
+
+    return(<div className="button-grid">
+      <Button index="1" label="One Hour" time={1} unit="hours" flipped={this.state.flipped} />
+      <Button index="2" label="3 Hours" time={3} unit="hours" flipped={this.state.flipped} />
+      <Button index="3" label="6 Hours" time={6} unit="hours" flipped={this.state.flipped} />
+      <Button index="4" label="12 Hours" time={12} unit="hours" flipped={this.state.flipped} />
+      <Button index="5" label="One Day" time={1} unit="days" flipped={this.state.flipped} />
+      <Button index="6" label="3 Days" time={3} unit="days" flipped={this.state.flipped} />
+      <Button index="7" label="One Week" time={1} unit="weeks" flipped={this.state.flipped} />
+      <Button index="8" label="One Month" time={1} unit="months" flipped={this.state.flipped} />
+      <DualButton flip={this.flip.bind(this)} />
+    </div>);
   }
 }
 
