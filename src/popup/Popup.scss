@@ -73,13 +73,28 @@ body {
     fill: $background-color
   }
 
-  a:hover .bg {
-    fill: $hover-bg-color;
-    transition: fill 0.5s;
+  a {
+    cursor: default;
+
+    &:hover .bg {
+      fill: $hover-bg-color;
+      transition: fill 0.5s;
+    }
   }
 }
 
 .tab-list {
+  overflow-y: scroll;
+	max-height: 283px;
+  transition: max-height 0.5s;
+
+
+  &.hidden {
+    max-height: 0;
+  }
+}
+
+.tab-list-expand {
   height: 17px;
   overflow: hidden;
   background-color: $background-color;
@@ -89,10 +104,53 @@ body {
     display: block;
     margin: -9px auto;
     height: 32px;
+    &.visible {
+      transform: rotate(180deg);
+      margin: -6px auto;
+    }
   }
 
   &:hover {
     background-color: $hover-bg-color;
     transition: background-color 0.5s;
+  }
+}
+
+.tab-item {
+  font-family: 'Roboto', sans-serif;
+  font-size: 12;
+  padding: 10px;
+  transition: background-color 0.5s;
+
+  &:hover {
+    background-color: $hover-bg-color;
+    transition: background-color 0.5s;
+  }
+
+  a {
+    text-decoration: none;
+    color: #fff;
+  }
+
+  img {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    vertical-align: top;
+  }
+
+  .tab-label {
+    display: inline-block;
+  }
+
+  .tab-name {
+    display: inline;
+  }
+
+  .tab-date {
+    font-style: normal;
+    font-weight: 300;
+    font-size: 10px;
+    margin: 0;
   }
 }
