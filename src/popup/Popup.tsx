@@ -5,6 +5,19 @@ import './Popup.scss';
 interface AppProps {}
 interface AppState {}
 
+var test_tabs = [
+  {name: "Tab 1", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000},
+  {name: "Tab 2", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000},
+  {name: "Tab 3", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000},
+  {name: "Tab 4", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000},
+  {name: "Tab 5", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000},
+  {name: "Tab 6", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000},
+  {name: "Tab 7", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000},
+  {name: "Tab 8", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000}
+]
+
+
+
 interface ButtonProps {
   index: string;
   label: string;
@@ -24,10 +37,6 @@ class Button extends React.Component<ButtonProps> {
     chrome.runtime.sendMessage({ new_snooze: true, date: date });
     alert(moment().add(this.props.time, this.props.unit));
     window.close();
-  }
-
-  test(): void {
-    alert("test");
   }
 
   render() {
@@ -96,7 +105,23 @@ class DualButton extends React.Component<DualButtonProps> {
   }
 }
 
-class TabCategory extends React.Component {}
+interface TabCategoryProps {
+  title?: string;
+  tabs: Array<any>;
+}
+
+class TabCategory extends React.Component<TabCategoryProps> {
+  render() {
+    return (
+      <div className="tab-category">
+        <p className="category-title">{this.props.title}</p>
+        {this.props.tabs.map(tab => (
+          <TabItem name={tab.name} url={tab.url} icon={tab.icon} date={tab.date} />
+        ))}
+      </div>
+    )
+  }
+}
 
 interface TabItemProps {
     name: string;
@@ -110,6 +135,10 @@ class TabItem extends React.Component<TabItemProps> {
     chrome.tabs.create({url: this.props.url});
   }
 
+  removeTab = () => {
+    alert("TAB REMOVED");
+  }
+
   render() {
     return (
       <div className="tab-item">
@@ -120,6 +149,14 @@ class TabItem extends React.Component<TabItemProps> {
               <p className="tab-name">{this.props.name}</p>
               <p className="tab-date">{this.props.date}</p>
             </div>
+          </div>
+        </a>
+        <a href="#" onClick={this.removeTab}>
+          <div className="delete-button">
+            <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="17" cy="17" r="17" fill="black" fill-opacity="0.04"/>
+            <path d="M15.3333 8.66666L14.5 9.49999H10.3333V11.1667H12.8333H21.1666H23.6666V9.49999H19.5L18.6666 8.66666H15.3333ZM11.1666 12.8333V23.6667C11.1666 24.5833 11.9166 25.3333 12.8333 25.3333H21.1666C22.0833 25.3333 22.8333 24.5833 22.8333 23.6667V12.8333H11.1666Z" fill="white"/>
+            </svg>
           </div>
         </a>
       </div>
@@ -139,24 +176,10 @@ class TabList extends React.Component {
   render() {
     const  visibility = this.state.showing? "visible" : "hidden";
 
-    var content = (
-      <TabItem name="Nintendo" url="https://google.com" icon="https://www.nintendo.com/etc.clientlibs/noa/clientlibs/clientlib-ncom/resources/images/mobile-icon/appicon_152.png" date="2:30 PM" />
-      <TabItem name="Nintendo" url="https://google.com" icon="https://www.nintendo.com/etc.clientlibs/noa/clientlibs/clientlib-ncom/resources/images/mobile-icon/appicon_152.png" date="2:30 PM" />
-    )
-
     return (
       <div>
         <div className={`tab-list ${visibility}`}>
-          <TabItem name="Nintendo" url="https://google.com" icon="https://www.nintendo.com/etc.clientlibs/noa/clientlibs/clientlib-ncom/resources/images/mobile-icon/appicon_152.png" date="2:30 PM" />
-          <TabItem name="Nintendo" url="https://google.com" icon="https://www.nintendo.com/etc.clientlibs/noa/clientlibs/clientlib-ncom/resources/images/mobile-icon/appicon_152.png" date="2:30 PM" />
-          <TabItem name="Nintendo" url="https://google.com" icon="https://www.nintendo.com/etc.clientlibs/noa/clientlibs/clientlib-ncom/resources/images/mobile-icon/appicon_152.png" date="2:30 PM" />
-          <TabItem name="Nintendo" url="https://google.com" icon="https://www.nintendo.com/etc.clientlibs/noa/clientlibs/clientlib-ncom/resources/images/mobile-icon/appicon_152.png" date="2:30 PM" />
-          <TabItem name="Nintendo" url="https://google.com" icon="https://www.nintendo.com/etc.clientlibs/noa/clientlibs/clientlib-ncom/resources/images/mobile-icon/appicon_152.png" date="2:30 PM" />
-          <TabItem name="Nintendo" url="https://google.com" icon="https://www.nintendo.com/etc.clientlibs/noa/clientlibs/clientlib-ncom/resources/images/mobile-icon/appicon_152.png" date="2:30 PM" />
-          <TabItem name="Nintendo" url="https://google.com" icon="https://www.nintendo.com/etc.clientlibs/noa/clientlibs/clientlib-ncom/resources/images/mobile-icon/appicon_152.png" date="2:30 PM" />
-          <TabItem name="Nintendo" url="https://google.com" icon="https://www.nintendo.com/etc.clientlibs/noa/clientlibs/clientlib-ncom/resources/images/mobile-icon/appicon_152.png" date="2:30 PM" />
-          <TabItem name="Nintendo" url="https://google.com" icon="https://www.nintendo.com/etc.clientlibs/noa/clientlibs/clientlib-ncom/resources/images/mobile-icon/appicon_152.png" date="2:30 PM" />
-          <TabItem name="Nintendo" url="https://google.com" icon="https://www.nintendo.com/etc.clientlibs/noa/clientlibs/clientlib-ncom/resources/images/mobile-icon/appicon_152.png" date="2:30 PM" />
+          <TabCategory title="Coming Up" tabs={test_tabs} />
         </div>
         <div className="tab-list-expand" onClick={this.toggleMenu}>
           <img className={`arrow ${visibility}`} src="img/expand-arrow.svg" />
