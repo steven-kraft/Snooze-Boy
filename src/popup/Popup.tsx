@@ -3,20 +3,28 @@ import * as moment from 'moment';
 import './Popup.scss';
 
 interface AppProps {}
-interface AppState {}
+interface AppState {
+  tabs: any;
+}
 
-var test_tabs = [
-  {name: "Tab 1", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000},
-  {name: "Tab 2", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000},
-  {name: "Tab 3", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000},
-  {name: "Tab 4", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000},
-  {name: "Tab 5", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000},
-  {name: "Tab 6", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000},
-  {name: "Tab 7", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000},
-  {name: "Tab 8", url: "https://www.google.com/", icon: "https://s.ytimg.com/yts/img/favicon_96-vflW9Ec0w.png", date: 1567738800000}
-]
+function saveTabs(tabs) {
+  chrome.runtime.sendMessage({message: "save", tabs: tabs}, (response) => {
+    alert("saved");
+  });
+}
 
-
+var time_labels = {
+  "This Morning": 43200000,
+  "This Afternoon": 64800000,
+  "This Evening": 79200000,
+  "Tonight": 86400000,
+  "Tomorrow Morning": 129600000,
+  "Tomorrow Afternoon": 151200000,
+  "Tomorrow Evening": 165600000,
+  "Tomorrow Night": 172800000,
+  "Later This Week": 604800000,
+  "In Less Than Two Weeks": 1209600000
+}
 
 interface ButtonProps {
   index: string;
@@ -24,19 +32,12 @@ interface ButtonProps {
   icon?: string;
   time?: number;
   unit?: moment.unitOfTime.DurationConstructor;
+  onSnooze: any;
 }
 
 class Button extends React.Component<ButtonProps> {
   constructor(props) {
     super(props);
-    this.handle_snooze = this.handle_snooze.bind(this);
-  }
-
-  handle_snooze(): void {
-    let date = Date.now();
-    chrome.runtime.sendMessage({ new_snooze: true, date: date });
-    alert(moment().add(this.props.time, this.props.unit));
-    window.close();
   }
 
   render() {
@@ -47,7 +48,7 @@ class Button extends React.Component<ButtonProps> {
     }
 
     return (
-      <button className="snooze-button" onClick={this.handle_snooze}>
+      <button className="snooze-button" onClick={this.props.onSnooze}>
         <div className="icon"><img src={img} /></div>
         <div className="label">{this.props.label}</div>
       </button>
@@ -86,7 +87,7 @@ class DualButton extends React.Component<DualButtonProps> {
     return (
       <div className="snooze-button dual">
         <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g clip-path="url(#clip0)">
+        <g clipPath="url(#clip0)">
         <a onClick={this.props.flip} href="#" id="bottom-button">
           <rect width="100" height="100" className="bg" />
           <path d="M91.497 86.1994C91.8589 86.0512 92.0954 85.6946 92.0971 85.3028L93.8586 70.6338C93.8604 70.099 93.4235 69.6622 92.8879 69.663L78.2498 71.4554C77.9868 71.4536 77.7405 71.5604 77.5632 71.7378C77.4732 71.8278 77.4026 71.9355 77.3514 72.0538C77.2013 72.4173 77.2975 72.8206 77.5755 73.0986L81.4224 76.9455C72.637 85.7308 66.3165 87.0952 59.0094 78.6178C67.9147 94.9662 77.9118 90.6772 86.5329 82.0561L90.453 85.9761C90.7319 86.2532 91.1343 86.3503 91.497 86.1994Z" fill="white"/>
@@ -108,6 +109,7 @@ class DualButton extends React.Component<DualButtonProps> {
 interface TabCategoryProps {
   title?: string;
   tabs: Array<any>;
+  onDelete: any;
 }
 
 class TabCategory extends React.Component<TabCategoryProps> {
@@ -116,7 +118,7 @@ class TabCategory extends React.Component<TabCategoryProps> {
       <div className="tab-category">
         <p className="category-title">{this.props.title}</p>
         {this.props.tabs.map(tab => (
-          <TabItem name={tab.name} url={tab.url} icon={tab.icon} date={tab.date} />
+          <TabItem key={tab.id} id={tab.id} name={tab.name} url={tab.url} icon={tab.icon} date={tab.date} onDelete={this.props.onDelete} />
         ))}
       </div>
     )
@@ -124,10 +126,12 @@ class TabCategory extends React.Component<TabCategoryProps> {
 }
 
 interface TabItemProps {
+    id: number;
     name: string;
     icon?: string;
     url: string;
     date?: any;
+    onDelete: any;
 }
 
 class TabItem extends React.Component<TabItemProps> {
@@ -135,8 +139,8 @@ class TabItem extends React.Component<TabItemProps> {
     chrome.tabs.create({url: this.props.url});
   }
 
-  removeTab = () => {
-    alert("TAB REMOVED");
+  formatDate = () => {
+    return moment(this.props.date).format("h:mm A - M/DD/YYYY");
   }
 
   render() {
@@ -147,14 +151,14 @@ class TabItem extends React.Component<TabItemProps> {
             <img src={this.props.icon} />
             <div className="tab-label">
               <p className="tab-name">{this.props.name}</p>
-              <p className="tab-date">{this.props.date}</p>
+              <p className="tab-date">{this.formatDate()}</p>
             </div>
           </div>
         </a>
-        <a href="#" onClick={this.removeTab}>
+        <a href="#" onClick={() => this.props.onDelete(this.props.id)}>
           <div className="delete-button">
             <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="17" cy="17" r="17" fill="black" fill-opacity="0.04"/>
+            <circle cx="17" cy="17" r="17" fill="black" fillOpacity="0.04"/>
             <path d="M15.3333 8.66666L14.5 9.49999H10.3333V11.1667H12.8333H21.1666H23.6666V9.49999H19.5L18.6666 8.66666H15.3333ZM11.1666 12.8333V23.6667C11.1666 24.5833 11.9166 25.3333 12.8333 25.3333H21.1666C22.0833 25.3333 22.8333 24.5833 22.8333 23.6667V12.8333H11.1666Z" fill="white"/>
             </svg>
           </div>
@@ -164,22 +168,62 @@ class TabItem extends React.Component<TabItemProps> {
   }
 }
 
-class TabList extends React.Component {
+interface TabListProps {
+    onDelete: any;
+    tabs: any;
+}
+
+class TabList extends React.Component<TabListProps> {
   state = { showing: false }
 
   toggleMenu = () => {
     this.setState({
       showing: !this.state.showing
-    })
+    });
   }
+
+  getTimeLabel(time){
+    var today = new Date().setUTCHours(0,0,0,0);
+    var time_label = "INVALID DATE";
+    if (moment(time).month == moment(today).month) {
+      time_label = "Later This Month";
+    } else {
+      time_label = moment(time).format("MMMM YYYY");
+    }
+
+    for (var label in time_labels) {
+      if (time - today < time_labels[label]) {
+        time_label = label;
+        break;
+      }
+    }
+
+    return time_label;
+  }
+
+  separateCategories(tabs) {
+    var sepTabs = [];
+    var prevLabel = "";
+    for (var t in tabs) {
+      var label = this.getTimeLabel(tabs[t].date);
+      if(label != prevLabel) {
+        sepTabs.push({label: label, tabs: []});
+        prevLabel = label;
+      }
+      sepTabs[sepTabs.length-1].tabs.push(tabs[t])
+    }
+    return sepTabs;
+  }
+
 
   render() {
     const  visibility = this.state.showing? "visible" : "hidden";
-
     return (
       <div>
         <div className={`tab-list ${visibility}`}>
-          <TabCategory title="Coming Up" tabs={test_tabs} />
+          {this.separateCategories(this.props.tabs).map(cat => (
+            <TabCategory key={cat.label} title={cat.label} tabs={cat.tabs} onDelete={this.props.onDelete} />
+          ))}
         </div>
         <div className="tab-list-expand" onClick={this.toggleMenu}>
           <img className={`arrow ${visibility}`} src="img/expand-arrow.svg" />
@@ -189,7 +233,7 @@ class TabList extends React.Component {
   }
 }
 
-class ButtonGrid extends React.Component<{}, {flipped: string}> {
+class ButtonGrid extends React.Component<{onSnooze: any}, {flipped: string}> {
   constructor(props) {
     super(props);
     this.state = {flipped: ""};
@@ -204,26 +248,26 @@ class ButtonGrid extends React.Component<{}, {flipped: string}> {
   render() {
     return(<div className={"button-grid" + this.state.flipped}>
         <div className="front">
-          <Button index="1" label="One Hour" time={1} unit="hours" />
-          <Button index="2" label="3 Hours" time={3} unit="hours" />
-          <Button index="3" label="6 Hours" time={6} unit="hours" />
-          <Button index="4" label="12 Hours" time={12} unit="hours" />
-          <Button index="5" label="One Day" time={1} unit="days" />
-          <Button index="6" label="3 Days" time={3} unit="days" />
-          <Button index="7" label="One Week" time={1} unit="weeks" />
-          <Button index="8" label="One Month" time={1} unit="months" />
+          <Button index="1" label="One Hour" time={1} unit="hours" onSnooze={this.props.onSnooze} />
+          <Button index="2" label="3 Hours" time={3} unit="hours" onSnooze={this.props.onSnooze} />
+          <Button index="3" label="6 Hours" time={6} unit="hours" onSnooze={this.props.onSnooze} />
+          <Button index="4" label="12 Hours" time={12} unit="hours" onSnooze={this.props.onSnooze} />
+          <Button index="5" label="One Day" time={1} unit="days" onSnooze={this.props.onSnooze} />
+          <Button index="6" label="3 Days" time={3} unit="days" onSnooze={this.props.onSnooze} />
+          <Button index="7" label="One Week" time={1} unit="weeks" onSnooze={this.props.onSnooze} />
+          <Button index="8" label="One Month" time={1} unit="months" onSnooze={this.props.onSnooze} />
           <DualButton flip={this.flip.bind(this)} />
         </div>
 
         <div className="back">
-          <Button index="1" label="Morning" time={1} unit="hours" icon="flip-icon-1.svg" />
-          <Button index="2" label="Night" time={3} unit="hours" icon="flip-icon-2.svg"  />
-          <Button index="3" label="Weekend" time={6} unit="hours" icon="flip-icon-3.svg"  />
-          <Button index="4" label="Soon" time={12} unit="hours" icon="flip-icon-4.svg"  />
-          <Button index="5" label="Few Days" time={1} unit="days" icon="flip-icon-5.svg"  />
-          <Button index="6" label="Eventually" time={3} unit="days" icon="flip-icon-6.svg"  />
-          <Button index="7" label="Custom 1" time={1} unit="weeks" icon="flip-icon-7.svg"  />
-          <Button index="8" label="Custom 2" time={1} unit="months" icon="flip-icon-8.svg"  />
+          <Button index="1" label="Morning" time={1} unit="hours" icon="flip-icon-1.svg" onSnooze={this.props.onSnooze} />
+          <Button index="2" label="Night" time={3} unit="hours" icon="flip-icon-2.svg"  onSnooze={this.props.onSnooze} />
+          <Button index="3" label="Weekend" time={6} unit="hours" icon="flip-icon-3.svg"  onSnooze={this.props.onSnooze} />
+          <Button index="4" label="Soon" time={12} unit="hours" icon="flip-icon-4.svg"  onSnooze={this.props.onSnooze} />
+          <Button index="5" label="Few Days" time={1} unit="days" icon="flip-icon-5.svg"  onSnooze={this.props.onSnooze} />
+          <Button index="6" label="Eventually" time={3} unit="days" icon="flip-icon-6.svg"  onSnooze={this.props.onSnooze} />
+          <Button index="7" label="Custom 1" time={1} unit="weeks" icon="flip-icon-7.svg"  onSnooze={this.props.onSnooze} />
+          <Button index="8" label="Custom 2" time={1} unit="months" icon="flip-icon-8.svg"  onSnooze={this.props.onSnooze} />
           <DualButton flip={this.flip.bind(this)} flipped={true} />
         </div>
     </div>);
@@ -233,18 +277,45 @@ class ButtonGrid extends React.Component<{}, {flipped: string}> {
 export default class Popup extends React.Component<AppProps, AppState> {
     constructor(props: AppProps, state: AppState) {
         super(props, state);
+        this.state = {tabs: []}
     }
 
-    componentDidMount() {
-        // Example of how to send a message to eventPage.ts.
-        chrome.runtime.sendMessage({ popupMounted: true });
+    componentDidMount(){
+      this.loadTabs()
+    }
+
+    sortTabs = () => {
+      if(this.state.tabs) {
+        this.setState(this.state.tabs.sort((a, b) => (a.date > b.date) ? 1 : -1));
+      }
+    }
+
+    loadTabs = () => {
+      chrome.storage.local.get(['tabs'], function(result) {
+        this.setState({
+          tabs: result.tabs
+        });
+        console.log("LOADED");
+        this.sortTabs();
+      }.bind(this));
+    }
+
+    handleDelete = tabId => {
+      this.setState({ tabs: this.state.tabs.filter(tab => tab.id !== tabId) });
+    };
+
+    handleSnooze = () => {
+      let date = Date.now();
+      saveTabs(this.state.tabs);
+
+      //alert(moment().add(this.props.time, this.props.unit));
     }
 
     render() {
         return (
             <div className="popupContainer">
-              <ButtonGrid />
-              <TabList />
+              <ButtonGrid onSnooze={this.handleSnooze} />
+              <TabList tabs={this.state.tabs} onDelete={this.handleDelete} />
             </div>
         )
     }
