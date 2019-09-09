@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as moment from 'moment';
+import * as shortid from 'shortid';
 import './Popup.scss';
 
 interface AppProps {}
@@ -7,9 +8,9 @@ interface AppState {
   tabs: any;
 }
 
-function saveTabs(tabs) {
+function saveTabs(tabs, callback) {
   chrome.runtime.sendMessage({message: "save", tabs: tabs}, (response) => {
-    alert("saved");
+    callback();
   });
 }
 
@@ -40,6 +41,10 @@ class Button extends React.Component<ButtonProps> {
     super(props);
   }
 
+  handleSnooze = () => {
+    this.props.onSnooze(this.props.time, this.props.unit);
+  }
+
   render() {
     if (!this.props.icon) {
       var img = "img/icon-" + this.props.index + ".svg";
@@ -48,7 +53,7 @@ class Button extends React.Component<ButtonProps> {
     }
 
     return (
-      <button className="snooze-button" onClick={this.props.onSnooze}>
+      <button className="snooze-button" onClick={this.handleSnooze}>
         <div className="icon"><img src={img} /></div>
         <div className="label">{this.props.label}</div>
       </button>
@@ -118,7 +123,7 @@ class TabCategory extends React.Component<TabCategoryProps> {
       <div className="tab-category">
         <p className="category-title">{this.props.title}</p>
         {this.props.tabs.map(tab => (
-          <TabItem key={tab.id} id={tab.id} name={tab.name} url={tab.url} icon={tab.icon} date={tab.date} onDelete={this.props.onDelete} />
+          <TabItem key={tab.key} id={tab.id} name={tab.name} url={tab.url} icon={tab.icon} date={tab.date} onDelete={this.props.onDelete} />
         ))}
       </div>
     )
@@ -215,7 +220,6 @@ class TabList extends React.Component<TabListProps> {
     return sepTabs;
   }
 
-
   render() {
     const  visibility = this.state.showing? "visible" : "hidden";
     return (
@@ -284,6 +288,22 @@ export default class Popup extends React.Component<AppProps, AppState> {
       this.loadTabs()
     }
 
+    addTab = (date) => {
+      chrome.tabs.query({highlighted: true, lastFocusedWindow: true}, function(tabs: Array<any>){
+        var new_tabs = this.state.tabs;
+        tabs.forEach(function(t) {
+        console.log(t);
+        var id = shortid.generate();
+        var new_tab = {key: id, id: id, name: t.title, url: t.url, icon: t.favIconUrl, date: date}
+        new_tabs.unshift(new_tab);
+        console.log("TAB ADDED");
+        console.log(new_tab);
+        });
+        this.setState({tabs: new_tabs});
+        saveTabs(this.state.tabs, window.close);
+      }.bind(this));
+    }
+
     sortTabs = () => {
       if(this.state.tabs) {
         this.setState(this.state.tabs.sort((a, b) => (a.date > b.date) ? 1 : -1));
@@ -292,23 +312,29 @@ export default class Popup extends React.Component<AppProps, AppState> {
 
     loadTabs = () => {
       chrome.storage.local.get(['tabs'], function(result) {
-        this.setState({
-          tabs: result.tabs
-        });
-        console.log("LOADED");
-        this.sortTabs();
+        if (result.tabs) {
+          console.log("Tabs Found in Storage, loading into list")
+          this.setState({
+            tabs: result.tabs
+          });
+          this.sortTabs();
+        } else {
+          console.log("No Tabs Found, Initializing List")
+          this.setState({
+            tabs: []
+          });
+          saveTabs(this.state.tabs, null);
+        }
       }.bind(this));
     }
 
     handleDelete = tabId => {
       this.setState({ tabs: this.state.tabs.filter(tab => tab.id !== tabId) });
+      saveTabs(this.state.tabs, null);
     };
 
-    handleSnooze = () => {
-      let date = Date.now();
-      saveTabs(this.state.tabs);
-
-      //alert(moment().add(this.props.time, this.props.unit));
+    handleSnooze = (time, unit) => {
+      this.addTab(moment().add(time, unit));
     }
 
     render() {
