@@ -151,6 +151,10 @@ body {
 
   .tab-label {
     display: inline-block;
+    width: 185px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .tab-name {

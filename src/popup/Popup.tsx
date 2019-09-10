@@ -8,12 +8,6 @@ interface AppState {
   tabs: any;
 }
 
-function saveTabs(tabs, callback) {
-  chrome.runtime.sendMessage({message: "save", tabs: tabs}, (response) => {
-    callback();
-  });
-}
-
 var time_labels = {
   "This Morning": 43200000,
   "This Afternoon": 64800000,
@@ -131,7 +125,7 @@ class TabCategory extends React.Component<TabCategoryProps> {
 }
 
 interface TabItemProps {
-    id: number;
+    id: string;
     name: string;
     icon?: string;
     url: string;
@@ -142,6 +136,7 @@ interface TabItemProps {
 class TabItem extends React.Component<TabItemProps> {
   openTab = () => {
     chrome.tabs.create({url: this.props.url});
+    this.props.onDelete(this.props.id);
   }
 
   formatDate = () => {
@@ -154,7 +149,7 @@ class TabItem extends React.Component<TabItemProps> {
         <a href="#" onClick={this.openTab}>
           <div>
             <img src={this.props.icon} />
-            <div className="tab-label">
+            <div className="tab-label" title={this.props.name}>
               <p className="tab-name">{this.props.name}</p>
               <p className="tab-date">{this.formatDate()}</p>
             </div>
@@ -292,22 +287,30 @@ export default class Popup extends React.Component<AppProps, AppState> {
       chrome.tabs.query({highlighted: true, lastFocusedWindow: true}, function(tabs: Array<any>){
         var new_tabs = this.state.tabs;
         tabs.forEach(function(t) {
-        console.log(t);
-        var id = shortid.generate();
-        var new_tab = {key: id, id: id, name: t.title, url: t.url, icon: t.favIconUrl, date: date}
-        new_tabs.unshift(new_tab);
-        console.log("TAB ADDED");
-        console.log(new_tab);
+          if (new_tabs.filter(nt => t.url == nt.url && date == nt.date).length == 0) {
+            console.log(t);
+            var id = shortid.generate();
+            var new_tab = {key: id, id: id, name: t.title, url: t.url, icon: t.favIconUrl, date: date}
+            new_tabs.push(new_tab);
+            chrome.tabs.remove(t.id);
+            console.log("TAB ADDED");
+            console.log(new_tab);
+          }
         });
-        this.setState({tabs: new_tabs});
-        saveTabs(this.state.tabs, window.close);
+        this.setState({tabs: this.sortTabs(new_tabs)}, this.saveTabs).then(null);
       }.bind(this));
     }
 
-    sortTabs = () => {
-      if(this.state.tabs) {
-        this.setState(this.state.tabs.sort((a, b) => (a.date > b.date) ? 1 : -1));
-      }
+    sortTabs = (tabs) => {
+      return tabs.sort((a, b) => (a.date > b.date) ? 1 : -1);
+    }
+
+    saveTabs = (callback = null) => {
+      /*chrome.runtime.sendMessage({message: "save", tabs: tabs}, (response) => {
+        callback();
+      });*/
+      console.log(this.state.tabs);
+      chrome.storage.local.set({'tabs': this.state.tabs}, callback);
     }
 
     loadTabs = () => {
@@ -315,26 +318,23 @@ export default class Popup extends React.Component<AppProps, AppState> {
         if (result.tabs) {
           console.log("Tabs Found in Storage, loading into list")
           this.setState({
-            tabs: result.tabs
+            tabs: this.sortTabs(result.tabs)
           });
-          this.sortTabs();
         } else {
           console.log("No Tabs Found, Initializing List")
           this.setState({
             tabs: []
-          });
-          saveTabs(this.state.tabs, null);
+          }, this.saveTabs);
         }
       }.bind(this));
     }
 
     handleDelete = tabId => {
-      this.setState({ tabs: this.state.tabs.filter(tab => tab.id !== tabId) });
-      saveTabs(this.state.tabs, null);
-    };
+      this.setState({ tabs: this.state.tabs.filter(tab => tab.id !== tabId) }, this.saveTabs);
+    }
 
     handleSnooze = (time, unit) => {
-      this.addTab(moment().add(time, unit));
+      this.addTab(parseInt(moment().add(time, unit).seconds(0).milliseconds(0).format('x')));
     }
 
     render() {
