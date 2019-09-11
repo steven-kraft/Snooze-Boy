@@ -297,7 +297,7 @@ export default class Popup extends React.Component<AppProps, AppState> {
             console.log(new_tab);
           }
         });
-        this.setState({tabs: this.sortTabs(new_tabs)}, this.saveTabs).then(null);
+        this.setState({tabs: this.sortTabs(new_tabs)}, this.saveTabs).then(window.close);
       }.bind(this));
     }
 

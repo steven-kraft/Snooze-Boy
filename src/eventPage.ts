@@ -24,3 +24,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     return isResponseAsync;
 });
+
+function openTab(t) {
+  chrome.tabs.create({url: t.url});
+}
+
+function checkTabs() {
+  chrome.storage.local.get(['tabs'], function(result) {
+    var date = new Date();
+    result.tabs.forEach(function(t) {
+      if(date > t.date) {
+        openTab(t);
+        saveTabs(result.tabs.filter(tab => tab.id !== t.id))
+      }
+    });
+  });
+}
+
+setInterval(function() {
+  var date = new Date();
+  if ( date.getSeconds() === 0 ) {
+    checkTabs();
+  }
+}, 1000);
