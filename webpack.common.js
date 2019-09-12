@@ -13,6 +13,7 @@ module.exports = {
     rules: [
       {
         exclude: /node_modules/,
+        include: [path.resolve(__dirname, "src/popup"), path.resolve(__dirname, "src/popup/components")],
         test: /\.tsx?$/,
         use: "ts-loader"
       },
