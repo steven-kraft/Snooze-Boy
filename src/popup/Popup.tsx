@@ -8,7 +8,30 @@ interface AppState {
   tabs: any;
 }
 
-var time_labels = {
+const default_buttons = [
+  [
+    {label:"One Hour",  time:1,  unit:"hours"},
+    {label:"3 Hours",   time:3,  unit:"hours"},
+    {label:"6 Hours",   time:6,  unit:"hours"},
+    {label:"12 Hours",  time:12, unit:"hours"},
+    {label:"24 Hours",  time:24, unit:"hours"},
+    {label:"72 Hours",  time:72, unit:"hours"},
+    {label:"One Week",  time:1,  unit:"weeks"},
+    {label:"One Month", time:1,  unit:"months"}
+  ],
+  [
+    {label:"Morning",    time:8},
+    {label:"Night",      time:19},
+    {label:"Weekend",    time:8,  day:"Saturday"},
+    {label:"Soon",       time:30, unit:"minutes"},
+    {label:"Few Days",   time:4,  unit:"days"},
+    {label:"Eventually", time:3,  unit:"months"},
+    {label:"Custom 1",   time:1,  unit:"weeks"},
+    {label:"Custom 2",   time:1,  unit:"months"}
+  ],
+]
+
+const time_labels = {
   "This Morning": 43200000,
   "This Afternoon": 64800000,
   "This Evening": 79200000,
@@ -22,11 +45,13 @@ var time_labels = {
 }
 
 interface ButtonProps {
-  index: string;
+  index: number;
   label: string;
+  flipped?: boolean;
   icon?: string;
   time?: number;
-  unit?: moment.unitOfTime.DurationConstructor;
+  unit?: string;
+  day?: string;
   onSnooze: any;
 }
 
@@ -35,19 +60,44 @@ class Button extends React.Component<ButtonProps> {
     super(props);
   }
 
+  getTime = () => {
+    var snooze_time = moment()
+    if (!this.props.unit) {
+      // if no unit is provided assume time property refers to hours and minutes in a day
+      var hours = Math.floor(this.props.time);
+      var minutes = Math.floor((this.props.time - hours) * 100);
+      snooze_time = snooze_time.hours(hours).minutes(minutes);
+      if (moment.weekdays().indexOf(this.props.day) !== -1) {
+        snooze_time.days(this.props.day)
+        if(snooze_time < moment()) {snooze_time = snooze_time.add(1, "weeks");}
+      } else if(snooze_time < moment()) {
+        snooze_time = snooze_time.add(1, "days");
+      }
+    } else {
+      var unit:moment.unitOfTime.DurationConstructor = this.props.unit as moment.unitOfTime.DurationConstructor;
+      snooze_time.add(this.props.time, unit);
+    }
+
+    if (["days", "weeks", "months"].indexOf(this.props.unit) !== -1) {
+      snooze_time = snooze_time.hours(8).minutes(0);
+    }
+    return snooze_time.seconds(0).milliseconds(0);
+  }
+
   handleSnooze = () => {
-    this.props.onSnooze(this.props.time, this.props.unit);
+    this.props.onSnooze(this.getTime());
   }
 
   render() {
     if (!this.props.icon) {
-      var img = "img/icon-" + this.props.index + ".svg";
+      var img = this.props.flipped ? "img/flip-icon-" : "img/icon-";
+      img += this.props.index.toString()  + ".svg";
     } else {
       var img = "img/" + this.props.icon;
     }
 
     return (
-      <button className="snooze-button" onClick={this.handleSnooze}>
+      <button className="snooze-button" title={this.getTime().format("MMMM DD, YYYY - h:mm A")} onClick={this.handleSnooze}>
         <div className="icon"><img src={img} /></div>
         <div className="label">{this.props.label}</div>
       </button>
@@ -247,26 +297,16 @@ class ButtonGrid extends React.Component<{onSnooze: any}, {flipped: string}> {
   render() {
     return(<div className={"button-grid" + this.state.flipped}>
         <div className="front">
-          <Button index="1" label="One Hour" time={1} unit="hours" onSnooze={this.props.onSnooze} />
-          <Button index="2" label="3 Hours" time={3} unit="hours" onSnooze={this.props.onSnooze} />
-          <Button index="3" label="6 Hours" time={6} unit="hours" onSnooze={this.props.onSnooze} />
-          <Button index="4" label="12 Hours" time={12} unit="hours" onSnooze={this.props.onSnooze} />
-          <Button index="5" label="One Day" time={1} unit="days" onSnooze={this.props.onSnooze} />
-          <Button index="6" label="3 Days" time={3} unit="days" onSnooze={this.props.onSnooze} />
-          <Button index="7" label="One Week" time={1} unit="weeks" onSnooze={this.props.onSnooze} />
-          <Button index="8" label="One Month" time={1} unit="months" onSnooze={this.props.onSnooze} />
+          {default_buttons[0].map((button, i) => (
+            <Button index={i+1} label={button.label} time={button.time} unit={button.unit} day={button.day} onSnooze={this.props.onSnooze} />
+          ))}
           <DualButton flip={this.flip.bind(this)} />
         </div>
 
         <div className="back">
-          <Button index="1" label="Morning" time={1} unit="hours" icon="flip-icon-1.svg" onSnooze={this.props.onSnooze} />
-          <Button index="2" label="Night" time={3} unit="hours" icon="flip-icon-2.svg"  onSnooze={this.props.onSnooze} />
-          <Button index="3" label="Weekend" time={6} unit="hours" icon="flip-icon-3.svg"  onSnooze={this.props.onSnooze} />
-          <Button index="4" label="Soon" time={12} unit="hours" icon="flip-icon-4.svg"  onSnooze={this.props.onSnooze} />
-          <Button index="5" label="Few Days" time={1} unit="days" icon="flip-icon-5.svg"  onSnooze={this.props.onSnooze} />
-          <Button index="6" label="Eventually" time={3} unit="days" icon="flip-icon-6.svg"  onSnooze={this.props.onSnooze} />
-          <Button index="7" label="Custom 1" time={1} unit="weeks" icon="flip-icon-7.svg"  onSnooze={this.props.onSnooze} />
-          <Button index="8" label="Custom 2" time={1} unit="months" icon="flip-icon-8.svg"  onSnooze={this.props.onSnooze} />
+          {default_buttons[1].map((button, i) => (
+            <Button index={i+1} label={button.label} time={button.time} unit={button.unit} day={button.day} flipped={true} onSnooze={this.props.onSnooze} />
+          ))}
           <DualButton flip={this.flip.bind(this)} flipped={true} />
         </div>
     </div>);
@@ -333,8 +373,8 @@ export default class Popup extends React.Component<AppProps, AppState> {
       this.setState({ tabs: this.state.tabs.filter(tab => tab.id !== tabId) }, this.saveTabs);
     }
 
-    handleSnooze = (time, unit) => {
-      this.addTab(parseInt(moment().add(time, unit).seconds(0).milliseconds(0).format('x')));
+    handleSnooze = (time) => {
+      this.addTab(parseInt(time.format('x')));
     }
 
     render() {
