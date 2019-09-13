@@ -41,14 +41,14 @@ export default class ButtonGrid extends React.Component<{onSnooze: any}, {flippe
     return(<div className={"button-grid" + this.state.flipped}>
         <div className="front">
           {default_buttons[0].map((button, i) => (
-            <Button index={i+1} label={button.label} time={button.time} unit={button.unit} day={button.day} onSnooze={this.props.onSnooze} />
+            <Button key={i+1} index={i+1} label={button.label} time={button.time} unit={button.unit} day={button.day} onSnooze={this.props.onSnooze} />
           ))}
           <DualButton flip={this.flip.bind(this)} />
         </div>
 
         <div className="back">
           {default_buttons[1].map((button, i) => (
-            <Button index={i+1} label={button.label} time={button.time} unit={button.unit} day={button.day} flipped={true} onSnooze={this.props.onSnooze} />
+            <Button key={i+1} index={i+1} label={button.label} time={button.time} unit={button.unit} day={button.day} flipped={true} onSnooze={this.props.onSnooze} />
           ))}
           <DualButton flip={this.flip.bind(this)} flipped={true} />
         </div>

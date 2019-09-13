@@ -1,15 +1,22 @@
 import * as React from 'react';
+import CustomSnooze from './CustomSnooze';
 
 interface DualButtonProps {
   flip?: any;
   flipped?: boolean;
 }
 
-export default class DualButton extends React.Component<DualButtonProps> {
-  custom_snooze(): void {
-    alert("CUSTOM SNOOZE WINDOW");
-    window.close();
+export default class DualButton extends React.Component<DualButtonProps, {snoozePopout: boolean}> {
+  constructor(props) {
+    super(props);
+    this.snoozePopout = this.snoozePopout.bind(this);
+    this.snoozePopoutClosed = this.snoozePopoutClosed.bind(this);
+    this.state = { snoozePopout: false };
   }
+
+  snoozePopout() { this.setState({snoozePopout: true}); }
+
+  snoozePopoutClosed() { this.setState({snoozePopout: false}); }
 
   open_settings(): void {
     alert("SETTINGS");
@@ -17,7 +24,7 @@ export default class DualButton extends React.Component<DualButtonProps> {
   }
 
   render() {
-    var button = (<a onClick={this.custom_snooze} href="#" id="top-button">
+    var button = (<a onClick={this.snoozePopout} href="#" id="top-button">
       <path d="M33.8308 100H0V0H100V34.1584L33.8308 100Z" className="bg" />
       <path d="M18.5 12V17H16C13.2425 17 11 19.2425 11 22V57C11 59.7575 13.2425 62 16 62H51C53.7575 62 56 59.7575 56 57V22C56 19.2425 53.7575 17 51 17H48.5V12H43.5V17H23.5V12H18.5ZM16 29.5H51L51.0049 57H16V29.5ZM31 37V42H26V47H31V52H36V47H41V42H36V37H31Z" fill="white"/>
     </a>)
@@ -30,20 +37,21 @@ export default class DualButton extends React.Component<DualButtonProps> {
 
     return (
       <div className="snooze-button dual">
+        {this.state.snoozePopout && <CustomSnooze snoozeClosed={this.snoozePopoutClosed} />}
         <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g clipPath="url(#clip0)">
-        <a onClick={this.props.flip} href="#" id="bottom-button">
-          <rect width="100" height="100" className="bg" />
-          <path d="M91.497 86.1994C91.8589 86.0512 92.0954 85.6946 92.0971 85.3028L93.8586 70.6338C93.8604 70.099 93.4235 69.6622 92.8879 69.663L78.2498 71.4554C77.9868 71.4536 77.7405 71.5604 77.5632 71.7378C77.4732 71.8278 77.4026 71.9355 77.3514 72.0538C77.2013 72.4173 77.2975 72.8206 77.5755 73.0986L81.4224 76.9455C72.637 85.7308 66.3165 87.0952 59.0094 78.6178C67.9147 94.9662 77.9118 90.6772 86.5329 82.0561L90.453 85.9761C90.7319 86.2532 91.1343 86.3503 91.497 86.1994Z" fill="white"/>
-        </a>
-        <line x1="33.6464" y1="100.646" x2="100.646" y2="33.6464" stroke="#6D6D6D"/>
-        {button}
-        </g>
-        <defs>
-        <clipPath id="clip0">
-        <rect width="100" height="100" />
-        </clipPath>
-        </defs>
+          <g clipPath="url(#clip0)">
+            <a onClick={this.props.flip} href="#" id="bottom-button">
+              <rect width="100" height="100" className="bg" />
+              <path d="M91.497 86.1994C91.8589 86.0512 92.0954 85.6946 92.0971 85.3028L93.8586 70.6338C93.8604 70.099 93.4235 69.6622 92.8879 69.663L78.2498 71.4554C77.9868 71.4536 77.7405 71.5604 77.5632 71.7378C77.4732 71.8278 77.4026 71.9355 77.3514 72.0538C77.2013 72.4173 77.2975 72.8206 77.5755 73.0986L81.4224 76.9455C72.637 85.7308 66.3165 87.0952 59.0094 78.6178C67.9147 94.9662 77.9118 90.6772 86.5329 82.0561L90.453 85.9761C90.7319 86.2532 91.1343 86.3503 91.497 86.1994Z" fill="white"/>
+            </a>
+            <line x1="33.6464" y1="100.646" x2="100.646" y2="33.6464" stroke="#6D6D6D"/>
+            {button}
+          </g>
+          <defs>
+            <clipPath id="clip0">
+              <rect width="100" height="100" />
+            </clipPath>
+          </defs>
         </svg>
       </div>
     );
