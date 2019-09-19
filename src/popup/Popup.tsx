@@ -25,19 +25,24 @@ export default class Popup extends React.Component<AppProps, AppState> {
     addTab = (date) => {
       chrome.tabs.query({highlighted: true, lastFocusedWindow: true}, function(tabs: Array<any>){
         var new_tabs = this.state.tabs;
+        var close_queue = [];
         tabs.forEach(function(t) {
           if (new_tabs.filter(nt => t.url == nt.url && date == nt.date).length == 0) {
-            console.log(t);
             var id = shortid.generate();
             var new_tab = {key: id, id: id, name: t.title, url: t.url, icon: t.favIconUrl, date: date}
             new_tabs.push(new_tab);
-            chrome.tabs.remove(t.id);
-            console.log("TAB ADDED");
-            console.log(new_tab);
+            close_queue.push(t.id);
           }
         });
-        this.setState({tabs: this.sortTabs(new_tabs)}, this.saveTabs).then(window.close);
+        this.setState({tabs: this.sortTabs(new_tabs)}, this.saveTabs.bind(this, this.closeTabs(close_queue)));
       }.bind(this));
+    }
+
+    closeTabs = (tabs) => {
+      tabs.forEach(function(id) {
+        chrome.tabs.remove(id);
+      });
+      window.close();
     }
 
     sortTabs = (tabs) => {
@@ -45,19 +50,16 @@ export default class Popup extends React.Component<AppProps, AppState> {
     }
 
     saveTabs = (callback = null) => {
-      console.log(this.state.tabs);
       chrome.storage.local.set({'tabs': this.state.tabs}, callback);
     }
 
     loadTabs = () => {
       chrome.storage.local.get(['tabs'], function(result) {
         if (result.tabs) {
-          console.log("Tabs Found in Storage, loading into list")
           this.setState({
             tabs: this.sortTabs(result.tabs)
           });
         } else {
-          console.log("No Tabs Found, Initializing List")
           this.setState({
             tabs: []
           }, this.saveTabs);
