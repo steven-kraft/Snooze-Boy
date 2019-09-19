@@ -4,6 +4,7 @@ import CustomSnooze from './CustomSnooze';
 interface DualButtonProps {
   flip?: any;
   flipped?: boolean;
+  customSnooze?: any;
 }
 
 export default class DualButton extends React.Component<DualButtonProps, {snoozePopout: boolean}> {
@@ -24,7 +25,7 @@ export default class DualButton extends React.Component<DualButtonProps, {snooze
   }
 
   render() {
-    var button = (<a onClick={this.snoozePopout} href="#" id="top-button">
+    var button = (<a onClick={this.props.customSnooze} href="#" id="top-button">
       <path d="M33.8308 100H0V0H100V34.1584L33.8308 100Z" className="bg" />
       <path d="M18.5 12V17H16C13.2425 17 11 19.2425 11 22V57C11 59.7575 13.2425 62 16 62H51C53.7575 62 56 59.7575 56 57V22C56 19.2425 53.7575 17 51 17H48.5V12H43.5V17H23.5V12H18.5ZM16 29.5H51L51.0049 57H16V29.5ZM31 37V42H26V47H31V52H36V47H41V42H36V37H31Z" fill="white"/>
     </a>)
@@ -37,7 +38,6 @@ export default class DualButton extends React.Component<DualButtonProps, {snooze
 
     return (
       <div className="snooze-button dual">
-        {this.state.snoozePopout && <CustomSnooze snoozeClosed={this.snoozePopoutClosed} />}
         <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g clipPath="url(#clip0)">
             <a onClick={this.props.flip} href="#" id="bottom-button">

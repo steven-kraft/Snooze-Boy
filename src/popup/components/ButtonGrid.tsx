@@ -25,7 +25,7 @@ const default_buttons = [
   ],
 ]
 
-export default class ButtonGrid extends React.Component<{onSnooze: any}, {flipped: string}> {
+export default class ButtonGrid extends React.Component<{onSnooze: any, customSnooze: any}, {flipped: string}> {
   constructor(props) {
     super(props);
     this.state = {flipped: ""};
@@ -43,7 +43,7 @@ export default class ButtonGrid extends React.Component<{onSnooze: any}, {flippe
           {default_buttons[0].map((button, i) => (
             <Button key={i+1} index={i+1} label={button.label} time={button.time} unit={button.unit} day={button.day} onSnooze={this.props.onSnooze} />
           ))}
-          <DualButton flip={this.flip.bind(this)} />
+          <DualButton flip={this.flip.bind(this)} customSnooze={this.props.customSnooze.bind(this)} />
         </div>
 
         <div className="back">
