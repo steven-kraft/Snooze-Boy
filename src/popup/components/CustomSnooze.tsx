@@ -15,7 +15,7 @@ export default class CustomSnooze extends React.Component<{onCancel: any, onSnoo
 
   handleSave = () => {
     if(moment(this.state.date[0]) > moment()) {
-      this.props.onSnooze(moment(this.state.date));
+      this.props.onSnooze(moment(this.state.date[0]));
     }
   };
 
