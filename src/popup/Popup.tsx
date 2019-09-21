@@ -24,33 +24,28 @@ export default class Popup extends React.Component<AppProps, AppState> {
 
     addTab = (date) => {
       chrome.tabs.query({highlighted: true, lastFocusedWindow: true}, function(tabs: Array<any>){
+        console.log(tabs);
         var new_tabs = this.state.tabs;
-        var close_queue = [];
         tabs.forEach(function(t) {
           if (new_tabs.filter(nt => t.url == nt.url && date == nt.date).length == 0) {
             var id = shortid.generate();
-            var new_tab = {key: id, id: id, name: t.title, url: t.url, icon: t.favIconUrl, date: date}
+            var icon = t.favIconUrl ? t.favIconUrl : "img/favicon.svg"
+            var new_tab = {key: id, id: id, cid: t.id, name: t.title, url: t.url, icon: icon, date: date}
             new_tabs.push(new_tab);
-            close_queue.push(t.id);
           }
         });
-        this.setState({tabs: this.sortTabs(new_tabs)}, this.saveTabs.bind(this, this.closeTabs(close_queue)));
+        var sorted_tabs = this.sortTabs(new_tabs);
+        this.setState({tabs: sorted_tabs});
+        this.saveTabs(sorted_tabs, true);
       }.bind(this));
-    }
-
-    closeTabs = (tabs) => {
-      tabs.forEach(function(id) {
-        chrome.tabs.remove(id);
-      });
-      window.close();
     }
 
     sortTabs = (tabs) => {
       return tabs.sort((a, b) => (a.date > b.date) ? 1 : -1);
     }
 
-    saveTabs = (callback = null) => {
-      chrome.storage.local.set({'tabs': this.state.tabs}, callback);
+    saveTabs = (tabs) => {
+      chrome.runtime.sendMessage({message: "save", tabs: tabs});
     }
 
     loadTabs = () => {
@@ -68,14 +63,16 @@ export default class Popup extends React.Component<AppProps, AppState> {
     }
 
     handleDelete = tabId => {
-      this.setState({ tabs: this.state.tabs.filter(tab => tab.id !== tabId) }, this.saveTabs);
+      var tabs = this.state.tabs.filter(tab => tab.id !== tabId);
+      this.setState({ tabs: tabs });
+      this.saveTabs(tabs);
     }
 
     handleSnooze = (time) => {
       this.addTab(parseInt(time.format('x')));
     }
 
-    customSnooze() {
+    customSnooze = () => {
       this.setState({customSnooze: !this.state.customSnooze});
     }
 

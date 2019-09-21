@@ -1,9 +1,15 @@
 function saveTabs(tabs) {
-  chrome.storage.local.set({'tabs': tabs}, function() {
-    // Notify that we saved.
-    console.log('Tabs Saved');
+  chrome.storage.local.set({'tabs': closeTabs(tabs)});
+}
 
+function closeTabs(tabs) {
+  tabs.forEach(function(t) {
+    if (t.cid) {
+      chrome.tabs.remove(t.cid);
+      delete t.cid;
+    }
   });
+  return tabs;
 }
 
 // Listen to messages sent from other parts of the extension.
@@ -41,9 +47,5 @@ function checkTabs() {
   });
 }
 
-setInterval(function() {
-  var date = new Date();
-  if ( date.getSeconds() === 0 ) {
-    checkTabs();
-  }
-}, 1000);
+// Check Tabs Every Second
+setInterval(checkTabs, 1000);
