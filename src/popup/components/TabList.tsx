@@ -30,7 +30,7 @@ export default class TabList extends React.Component<TabListProps> {
   }
 
   getTimeLabel(time){
-    var today = new Date().setUTCHours(0,0,0,0);
+    var today = new Date().setHours(0,0,0,0);
     var time_label = "INVALID DATE";
     if (moment(time).month == moment(today).month) {
       time_label = "Later This Month";
@@ -39,7 +39,7 @@ export default class TabList extends React.Component<TabListProps> {
     }
 
     for (var label in time_labels) {
-      if (time - today < time_labels[label]) {
+      if (today + time_labels[label] > time) {
         time_label = label;
         break;
       }

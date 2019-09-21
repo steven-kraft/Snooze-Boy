@@ -36,16 +36,23 @@ function openTab(t) {
 }
 
 function checkTabs() {
-  chrome.storage.local.get(['tabs'], function(result) {
-    var date = new Date();
-    result.tabs.forEach(function(t) {
-      if(date > t.date) {
-        openTab(t);
-        saveTabs(result.tabs.filter(tab => tab.id !== t.id))
-      }
+    var remove_ids = []
+    chrome.storage.local.get(['tabs'], function(result) {
+      var tabs = result;
+      var date = new Date();
+      result.tabs.forEach(function(t) {
+        if(date > t.date) {
+          openTab(t);
+          remove_ids.push(t.id)
+        }
+      });
+      saveTabs(result.tabs.filter(tab => !remove_ids.includes(tab.id)));
     });
-  });
 }
 
-// Check Tabs Every Second
-setInterval(checkTabs, 1000);
+setInterval(function() {
+  var date = new Date();
+  if ( date.getSeconds() === 0 ) {
+    checkTabs();
+  }
+}, 1000);
