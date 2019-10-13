@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap');
+@import 'fonts.css';
 @import '~flatpickr/dist/themes/light.css';
 
 $background-color: #4D4D4D;
@@ -7,8 +7,6 @@ $hover-bg-color: #7D7D7D;
 
 body {
     margin: 0px;
-    min-width: 300px;
-    min-height: 300px;
     background-color: $background-color;
 }
 
@@ -253,5 +251,34 @@ body {
 
   #snooze-button {
     background-color: #42a5f5;
+  }
+}
+
+#button-editor {
+  .icon-preview {
+    width: 64px;
+    height: 64px;
+    background-color: #2C2C2C;
+    margin: 16px;
+    img {
+      width: 48px;
+      height: 48px;
+      margin: 8px;
+    }
+  }
+
+  input {
+    background: transparent;
+    border-style: none none solid none;
+    border-width: 1px;
+    color: white;
+    font-family: 'Roboto';
+    font-weight: 200;
+    font-size: 16px;
+    line-height: 18px;
+  }
+  ::placeholder {
+    color: white;
+    opacity: 0.5;
   }
 }

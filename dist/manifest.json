@@ -12,8 +12,7 @@
     },
 
     "background": {
-        "scripts": ["js/eventPage.js"],
-        "persistent": false
+        "scripts": ["js/eventPage.js"]
     },
 
     "icons": {

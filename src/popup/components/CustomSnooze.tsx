@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PopoutWindow from 'react-popout';
 import * as moment from 'moment';
 import Flatpickr from 'react-flatpickr'
 
