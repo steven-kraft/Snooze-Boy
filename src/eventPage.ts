@@ -32,7 +32,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 function openTab(t) {
-  chrome.tabs.create({url: t.url});
+  chrome.tabs.create({url: t.url, active: false});
 }
 
 function checkTabs() {
