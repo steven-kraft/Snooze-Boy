@@ -255,11 +255,16 @@ body {
 }
 
 #button-editor {
+  width: 300px;
+  height: 175px;
+
   .icon-preview {
+    display: inline-block;
     width: 64px;
     height: 64px;
     background-color: #2C2C2C;
     margin: 16px;
+    margin-right: 8px;
     img {
       width: 48px;
       height: 48px;
@@ -267,18 +272,77 @@ body {
     }
   }
 
-  input {
+  .save-button {
+    margin-top: 10px;
+    margin-right: 10px;
+    float: right;
+  }
+
+  .test {
+    display: flex;
+  }
+
+  .snooze-label-edit {
+    margin-top: 38px;
+    height: 38px;
     background: transparent;
     border-style: none none solid none;
-    border-width: 1px;
+    border-width: 1.5px;
     color: white;
     font-family: 'Roboto';
-    font-weight: 200;
+    font-weight: 300;
     font-size: 16px;
-    line-height: 18px;
   }
   ::placeholder {
     color: white;
     opacity: 0.5;
+  }
+}
+
+.radio-section {
+  display: flex;
+  margin-bottom: 15px;
+
+  input {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+    border: 1.5px solid #1d1d1d;
+    border-radius: 50%;
+    outline: none;
+    margin: auto 30px;
+  }
+  input:before {
+    content:'';
+    display: block;
+    width: 61%;
+    height: 61%;
+    margin: 20% 20%;
+    border-radius: 50%;
+  }
+  input:checked:before {
+    background-color: #2196F3;
+  }
+
+  input:checked {
+    border-color: #2196F3;
+  }
+
+  #interval-unit-select {
+    width: 92px;
+  }
+
+  select {
+    background: transparent;
+    color: white;
+    font-family: 'Roboto';
+    font-weight: 200;
+    font-size: 16px;
+    border-style: none none solid none;
+    border-width: 1px;
+    height: 32px;
+    margin-right: 20px;
   }
 }
