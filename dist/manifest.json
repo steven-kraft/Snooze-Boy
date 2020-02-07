@@ -1,23 +1,21 @@
 {
     "manifest_version": 2,
 
-    "name": "Chrome Extension (built with TypeScript + React)",
+    "name": "Snooze Boy",
     "description":
-        "A boilerplate project to quickly build a Chrome extension using TypeScript and React (built using webpack).",
+        "Tab \"snoozing\" extension, designed to keep your tabs out of the way until you need them.",
     "version": "1.0.0",
 
     "browser_action": {
-        "default_icon": "icon16.png",
+        "default_icon": "icon48.png",
         "default_popup": "popup.html"
     },
 
     "background": {
-        "scripts": ["js/eventPage.js"],
-        "persistent": false
+        "scripts": ["js/eventPage.js"]
     },
 
     "icons": {
-        "16": "icon16.png",
         "48": "icon48.png",
         "128": "icon128.png"
     },

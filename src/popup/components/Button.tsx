@@ -10,6 +10,7 @@ interface ButtonProps {
   unit?: string;
   day?: string;
   onSnooze: any;
+  onRightClick: any;
 }
 
 export default class Button extends React.Component<ButtonProps> {
@@ -45,6 +46,11 @@ export default class Button extends React.Component<ButtonProps> {
     this.props.onSnooze(this.getTime());
   }
 
+  handleRightClick = () => {
+    this.props.onRightClick(this.props);
+    return false;
+  }
+
   render() {
     if (!this.props.icon) {
       var img = this.props.flipped ? "img/flip-icon-" : "img/icon-";
@@ -54,7 +60,7 @@ export default class Button extends React.Component<ButtonProps> {
     }
 
     return (
-      <button className="snooze-button" title={this.getTime().format("MMMM DD, YYYY - h:mm A")} onClick={this.handleSnooze}>
+      <button className="snooze-button" title={this.getTime().format("MMMM DD, YYYY - h:mm A")} onClick={this.handleSnooze} onContextMenu={this.handleRightClick}>
         <div className="icon"><img src={img} /></div>
         <div className="label">{this.props.label}</div>
       </button>

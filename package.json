@@ -15,14 +15,19 @@
     "@types/react": "^16.0.40",
     "@types/react-dom": "^16.0.4",
     "css-loader": "^0.28.11",
+<<<<<<< Updated upstream
+    "file-loader": "^4.2.0",
     "node-sass": "^4.7.2",
+=======
+    "node-sass": "^4.13.1",
+>>>>>>> Stashed changes
     "sass-loader": "^6.0.7",
     "style-loader": "^0.20.3",
     "ts-loader": "^4.0.1",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-react": "^3.6.0",
     "typescript": "^2.7.2",
-    "webpack": "^4.1.1",
+    "webpack": "^4.41.5",
     "webpack-cli": "^3.1.1",
     "webpack-merge": "^4.1.4"
   },
@@ -31,7 +36,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-flatpickr": "^3.9.1",
-    "react-popout": "^1.0.2",
+    "react-popout-component": "^1.8.5",
     "shortid": "^2.2.15"
   }
 }

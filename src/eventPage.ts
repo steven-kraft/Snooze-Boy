@@ -40,13 +40,15 @@ function checkTabs() {
     chrome.storage.local.get(['tabs'], function(result) {
       var tabs = result;
       var date = new Date();
-      result.tabs.forEach(function(t) {
-        if(date > t.date) {
-          openTab(t);
-          remove_ids.push(t.id)
-        }
-      });
-      saveTabs(result.tabs.filter(tab => !remove_ids.includes(tab.id)));
+      if(result.tabs) {
+        result.tabs.forEach(function(t) {
+          if(date > t.date) {
+            openTab(t);
+            remove_ids.push(t.id)
+          }
+        });
+        saveTabs(result.tabs.filter(tab => !remove_ids.includes(tab.id)));
+      }
     });
 }
 
