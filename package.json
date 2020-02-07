@@ -15,12 +15,7 @@
     "@types/react": "^16.0.40",
     "@types/react-dom": "^16.0.4",
     "css-loader": "^0.28.11",
-<<<<<<< Updated upstream
-    "file-loader": "^4.2.0",
-    "node-sass": "^4.7.2",
-=======
     "node-sass": "^4.13.1",
->>>>>>> Stashed changes
     "sass-loader": "^6.0.7",
     "style-loader": "^0.20.3",
     "ts-loader": "^4.0.1",
