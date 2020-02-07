@@ -2,7 +2,6 @@ import * as React from 'react';
 import Button from './Button';
 import DualButton from './DualButton';
 import ButtonEditor from './ButtonEditor';
-import ButtonEdit from './ButtonEdit';
 
 const default_buttons = [
   [
@@ -27,7 +26,7 @@ const default_buttons = [
   ],
 ]
 
-export default class ButtonGrid extends React.Component<{onSnooze: any, customSnooze: any}, {flipped: string, editButton: any}> {
+export default class ButtonGrid extends React.Component<{onSnooze: any, customSnooze: any, buttonEditor: any}, {flipped: string, editButton: any}> {
   constructor(props) {
     super(props);
     this.state = {flipped: "", editButton: null};
@@ -56,16 +55,11 @@ export default class ButtonGrid extends React.Component<{onSnooze: any, customSn
         <ButtonEditor button={this.state.editButton} onClose={this.closeButtonEditor} />
       );
     }*/
-    if (this.state.editButton) {
-      return(
-        <ButtonEdit/>
-      )
-    }
     return(
       <div className={"button-grid" + this.state.flipped}>
         <div className="front">
           {default_buttons[0].map((button, i) => (
-            <Button key={button.id} index={button.id} label={button.label} time={button.time} unit={button.unit} day={button.day} onSnooze={this.props.onSnooze} onRightClick={this.openButtonEditor} />
+            <Button key={button.id} index={button.id} label={button.label} time={button.time} unit={button.unit} day={button.day} onSnooze={this.props.onSnooze} onRightClick={this.props.buttonEditor.bind(this)} />
           ))}
           <DualButton flip={this.flip.bind(this)} customSnooze={this.props.customSnooze.bind(this)} />
         </div>

@@ -5,17 +5,19 @@ import './Popup.scss';
 import TabList from './components/TabList';
 import ButtonGrid from './components/ButtonGrid';
 import CustomSnooze from './components/CustomSnooze';
+import ButtonEdit from './components/ButtonEdit';
 
 interface AppProps {}
 interface AppState {
   tabs: any,
-  customSnooze: boolean
+  customSnooze: boolean,
+  buttonEditor: boolean,
 }
 
 export default class Popup extends React.Component<AppProps, AppState> {
     constructor(props: AppProps, state: AppState) {
         super(props, state);
-        this.state = {tabs: [], customSnooze: false}
+        this.state = {tabs: [], customSnooze: false, buttonEditor: false}
     }
 
     componentDidMount(){
@@ -76,15 +78,24 @@ export default class Popup extends React.Component<AppProps, AppState> {
       this.setState({customSnooze: !this.state.customSnooze});
     }
 
+    buttonEditor = () => {
+      this.setState({buttonEditor: !this.state.buttonEditor});
+    }
+
     render() {
         if(this.state.customSnooze){
           return (
             <CustomSnooze onCancel={this.customSnooze.bind(this)} onSnooze={this.handleSnooze} />
           )
         }
+        if(this.state.buttonEditor){
+          return (
+            <ButtonEdit />
+          )
+        }
         return (
             <div className="popupContainer">
-              <ButtonGrid onSnooze={this.handleSnooze} customSnooze={this.customSnooze.bind(this)} />
+              <ButtonGrid onSnooze={this.handleSnooze} customSnooze={this.customSnooze.bind(this)} buttonEditor={this.buttonEditor.bind(this)} />
               <TabList tabs={this.state.tabs} onDelete={this.handleDelete} />
             </div>
         )
