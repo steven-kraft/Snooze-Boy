@@ -2,6 +2,7 @@ import * as React from 'react';
 import Button from './Button';
 import DualButton from './DualButton';
 import ButtonEditor from './ButtonEditor';
+import ButtonEdit from './ButtonEdit';
 
 const default_buttons = [
   [
@@ -48,11 +49,17 @@ export default class ButtonGrid extends React.Component<{onSnooze: any, customSn
   }
 
   render() {
+    /*
     var editor = null;
     if (this.state.editButton) {
       editor = (
         <ButtonEditor button={this.state.editButton} onClose={this.closeButtonEditor} />
       );
+    }*/
+    if (this.state.editButton) {
+      return(
+        <ButtonEdit/>
+      )
     }
     return(
       <div className={"button-grid" + this.state.flipped}>
@@ -69,7 +76,6 @@ export default class ButtonGrid extends React.Component<{onSnooze: any, customSn
           ))}
           <DualButton flip={this.flip.bind(this)} flipped={true} />
         </div>
-        {editor}
     </div>);
   }
 }
