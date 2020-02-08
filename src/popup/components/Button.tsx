@@ -53,8 +53,7 @@ export default class Button extends React.Component<ButtonProps> {
 
   render() {
     if (!this.props.icon) {
-      var img = this.props.flipped ? "img/flip-icon-" : "img/icon-";
-      img += this.props.index.toString()  + ".svg";
+      var img = `img/icon-${this.props.index}.svg`
     } else {
       var img = "img/" + this.props.icon;
     }
