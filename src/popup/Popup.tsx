@@ -90,7 +90,7 @@ export default class Popup extends React.Component<AppProps, AppState> {
         }
         if(this.state.buttonEditor){
           return (
-            <ButtonEdit index={this.state.buttonEditor.index} />
+            <ButtonEdit button={this.state.buttonEditor} />
           )
         }
         return (

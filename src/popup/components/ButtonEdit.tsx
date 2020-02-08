@@ -2,7 +2,7 @@ import * as React from 'react';
 import IconPreview from './IconPreview'
 
 interface ButtonEditProps {
-  index: number;
+  button: any;
 }
 
 export default class ButtonEdit extends React.Component<ButtonEditProps> {
@@ -11,11 +11,10 @@ export default class ButtonEdit extends React.Component<ButtonEditProps> {
   }
 
   render() {
-    console.log(this.props.index);
-
     return(
       <div className={"button-editor"}>
-        <IconPreview icon={`icon-${this.props.index}.svg`} />
+        <IconPreview icon={`icon-${this.props.button.index}.svg`} />
+        <input className="snooze-label-edit" type="text" placeholder={this.props.button.label} name="label"/>
       </div>
     );
   }
