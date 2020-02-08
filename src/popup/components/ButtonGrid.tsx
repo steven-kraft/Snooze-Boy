@@ -66,7 +66,7 @@ export default class ButtonGrid extends React.Component<{onSnooze: any, customSn
 
         <div className="back">
           {default_buttons[1].map((button, i) => (
-            <Button key={button.id} index={button.id} label={button.label} time={button.time} unit={button.unit} day={button.day} flipped={true} onSnooze={this.props.onSnooze} onRightClick={this.openButtonEditor} />
+            <Button key={button.id} index={button.id} label={button.label} time={button.time} unit={button.unit} day={button.day} flipped={true} onSnooze={this.props.onSnooze} onRightClick={this.props.buttonEditor.bind(this)} />
           ))}
           <DualButton flip={this.flip.bind(this)} flipped={true} />
         </div>

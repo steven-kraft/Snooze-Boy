@@ -11,13 +11,13 @@ interface AppProps {}
 interface AppState {
   tabs: any,
   customSnooze: boolean,
-  buttonEditor: boolean,
+  buttonEditor: any,
 }
 
 export default class Popup extends React.Component<AppProps, AppState> {
     constructor(props: AppProps, state: AppState) {
         super(props, state);
-        this.state = {tabs: [], customSnooze: false, buttonEditor: false}
+        this.state = {tabs: [], customSnooze: false, buttonEditor: null}
     }
 
     componentDidMount(){
@@ -78,8 +78,8 @@ export default class Popup extends React.Component<AppProps, AppState> {
       this.setState({customSnooze: !this.state.customSnooze});
     }
 
-    buttonEditor = () => {
-      this.setState({buttonEditor: !this.state.buttonEditor});
+    openButtonEditor = (button) => {
+      this.setState({buttonEditor: button});
     }
 
     render() {
@@ -90,12 +90,12 @@ export default class Popup extends React.Component<AppProps, AppState> {
         }
         if(this.state.buttonEditor){
           return (
-            <ButtonEdit />
+            <ButtonEdit index={this.state.buttonEditor.index} />
           )
         }
         return (
             <div className="popupContainer">
-              <ButtonGrid onSnooze={this.handleSnooze} customSnooze={this.customSnooze.bind(this)} buttonEditor={this.buttonEditor.bind(this)} />
+              <ButtonGrid onSnooze={this.handleSnooze} customSnooze={this.customSnooze.bind(this)} buttonEditor={this.openButtonEditor.bind(this)} />
               <TabList tabs={this.state.tabs} onDelete={this.handleDelete} />
             </div>
         )
