@@ -56,6 +56,21 @@ body {
     font-weight: 300;
     font-size: 16px;
   }
+
+  .time-picker {
+    position: absolute;
+    top: 90px;
+    left: 40px;
+    :before {
+      border-bottom: thin solid white;
+    }
+    input {
+      color: white;
+      font-family: 'Roboto';
+      font-weight: 300;
+      font-size: 16px;
+    }
+  }
 }
 
 .front, .back {
