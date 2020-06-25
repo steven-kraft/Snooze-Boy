@@ -34,8 +34,9 @@ body {
     width: 64px;
     height: 64px;
     background-color: #2C2C2C;
-    margin: 16px;
-    margin-right: 8px;
+    position: absolute;
+    left: 20px;
+    top: 21px;
     img {
       width: 48px;
       height: 48px;
@@ -45,7 +46,8 @@ body {
 
   .snooze-label-edit {
     position: absolute;
-    top: 36px;
+    top: 44px;
+    left: 94px;
     height: 38px;
     background: transparent;
     border-style: none none solid none;
@@ -58,9 +60,6 @@ body {
   }
 
   .time-picker {
-    position: absolute;
-    top: 90px;
-    left: 40px;
     :before {
       border-bottom: thin solid white;
     }
@@ -69,7 +68,80 @@ body {
       font-family: 'Roboto';
       font-weight: 300;
       font-size: 16px;
+      margin-top: 4px;
     }
+  }
+
+  .weekday-picker {
+    border-bottom: thin solid white;
+    color: white;
+    font-family: 'Roboto';
+    font-weight: 300;
+    font-size: 16px;
+    margin-left: 20px;
+    .MuiSelect-select.MuiSelect-select {
+      padding-right: 34px;
+    }
+  }
+
+  .number-select {
+    width: 40px;
+    color: white;
+    font-family: 'Roboto';
+    font-weight: 300;
+    font-size: 16px;
+    margin-top: 4px;
+  }
+
+  .interval-picker {
+    border-bottom: thin solid white;
+    color: white;
+    font-family: 'Roboto';
+    font-weight: 300;
+    font-size: 16px;
+    margin-left: 24px;
+  }
+
+  .default-button {
+    width: 83px;
+    height: 26px;
+    position: absolute;
+    left: 210px;
+    top: 7px;
+    font-size: 12px;
+    padding: 0;
+  }
+
+  .cancel-button {
+    width: 95px;
+    height: 30px;
+    position: absolute;
+    left: 20px;
+    top: 201px;
+    font-size: 12px;
+    padding: 0;
+  }
+
+  .save-button {
+    width: 77px;
+    height: 30px;
+    position: absolute;
+    left: 205px;
+    top: 201px;
+    font-size: 12px;
+    padding: 0;
+  }
+
+  .day-options {
+    position: absolute;
+    top: 103px;
+    left: 10px;
+  }
+
+  .interval-options {
+    position: absolute;
+    top: 142px;
+    left: 10px;
   }
 }
 

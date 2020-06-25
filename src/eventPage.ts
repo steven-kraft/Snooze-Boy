@@ -1,3 +1,5 @@
+const openAudio = new Audio(chrome.runtime.getURL("open.wav"));
+
 function saveTabs(tabs) {
   chrome.storage.local.set({'tabs': closeTabs(tabs)});
 }
@@ -14,7 +16,6 @@ function closeTabs(tabs) {
 
 // Listen to messages sent from other parts of the extension.
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    // onMessage must return "true" if response is async.
     let isResponseAsync = false;
 
     switch(request.message) {
@@ -33,6 +34,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 function openTab(t) {
   chrome.tabs.create({url: t.url, active: false});
+  openAudio.play();
 }
 
 function checkTabs() {
